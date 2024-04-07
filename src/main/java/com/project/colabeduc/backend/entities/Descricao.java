@@ -1,5 +1,7 @@
 package com.project.colabeduc.backend.entities;
 
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +32,10 @@ public class Descricao {
     @Column
     private String descricao;
 
+    @Column
+    private Date date_created;
 
-    
+    @Column
+    private Date last_updated;
 
 }
