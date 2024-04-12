@@ -30,7 +30,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/")
-    @Secured(value = { "ROLE_ADMIN", "ROLE_GESTOR", })
+    @Secured(value = { "ROLE_GESTOR" })
     public List<Usuario> getUsuarios() {
         List<Usuario> usuarios = usuarioService.getUsuarios();
         return usuarios;
@@ -49,7 +49,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{idUsuario}")
-    @Secured(value = { "ROLE_ADMIN", "ROLE_GESTOR", })
+    @Secured(value = { "ROLE_GESTOR", })
     public void remover(@PathVariable Long idUsuario) {
         usuarioService.remover(idUsuario);
     }
