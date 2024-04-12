@@ -36,7 +36,6 @@ public class UsuarioService {
     }
 
     public Usuario salvar(Usuario usuario) throws Exception {
-        String senhaNormal = usuario.getPassword();
         String senhaCriptografada = bCryptPasswordEncoder.encode(senhaNormal);
         usuario.setPassword(senhaCriptografada);
 
@@ -53,9 +52,6 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario atualizar(Usuario usuario) {
-        return usuarioRepository.save(usuario);
-    }
 
     public void remover(Long idUsuario) {
         usuarioRepository.deleteById(idUsuario);
