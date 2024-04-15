@@ -11,4 +11,6 @@ import com.project.colabeduc.backend.entities.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     List<Usuario> getUsuarios();
+
+    Usuario findByUsername(String username);
 }

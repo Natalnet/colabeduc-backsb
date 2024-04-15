@@ -2,8 +2,12 @@ package com.project.colabeduc.backend.entities;
 
 import java.util.Date;
 
+import com.project.colabeduc.backend.enums.Papel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +18,7 @@ import lombok.Setter;
 @Entity
 @Getter @Setter
 @NamedQuery(name = "Usuario.getUsuarios", query ="SELECT u FROM Usuario u")
+@NamedQuery(name = "Usuario.findByUsername", query = "SELECT u FROM Usuario u WHERE u.username=:username")
 public class Usuario {
     
     @Id
@@ -52,5 +57,9 @@ public class Usuario {
 
     @Column
     private Date last_updated;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, updatable = false)
+    private Papel papel;
 
 }
