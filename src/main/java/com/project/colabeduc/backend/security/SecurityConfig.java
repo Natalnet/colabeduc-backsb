@@ -39,6 +39,8 @@ public class SecurityConfig {
             authorizeConfig -> {
               authorizeConfig.requestMatchers(HttpMethod.POST, "/login").permitAll();
               authorizeConfig.requestMatchers(HttpMethod.GET, "/status").permitAll();
+              authorizeConfig.requestMatchers(HttpMethod.POST, "/api/usuarios/recuperar-senha").permitAll();
+              authorizeConfig.requestMatchers(HttpMethod.POST, "/api/usuarios/resetar-senha").permitAll();
               authorizeConfig.anyRequest().authenticated();
             })
         .addFilter(new JWTAuthenticationFilter(configuration.getAuthenticationManager()))
