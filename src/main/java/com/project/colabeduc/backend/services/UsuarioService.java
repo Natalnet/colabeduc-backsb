@@ -9,8 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.project.colabeduc.backend.entities.PasswordGenerator;
+import com.project.colabeduc.backend.entities.PasswordResetToken;
 import com.project.colabeduc.backend.entities.Usuario;
+import com.project.colabeduc.backend.repositories.PasswordResetTokenRepository;
 import com.project.colabeduc.backend.repositories.UsuarioRepository;
+import com.project.colabeduc.exceptions.EmailNaoEncontradoException;
+import com.project.colabeduc.exceptions.TokenInvalidoException;
+
+import jakarta.mail.MessagingException;
+
+import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class UsuarioService {
@@ -24,6 +34,11 @@ public class UsuarioService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     public Usuario getUsuario(Long idUsuario) {
         Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
@@ -65,5 +80,41 @@ public class UsuarioService {
         return usuarioRepository.findByUsername(login);
     }
 
+    public void recuperarSenha(String email)  throws MessagingException{
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario != null) {
+            String token = UUID.randomUUID().toString();
+            PasswordResetToken resetToken = new PasswordResetToken();
+            resetToken.setToken(token);
+            resetToken.setEmail(email);
+            resetToken.setExpiryDate(new Date(System.currentTimeMillis() + 3600000)); // 1 hora de expiração
+            passwordResetTokenRepository.save(resetToken);
+           
+            // Envie o e-mail com o token
+            emailService.sendPasswordResetEmail(email, token);
+        } else {
+            throw new EmailNaoEncontradoException("Email não encontrado");
+        }
+    }
+
+    public void resetarSenha(String token, String novaSenha) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token);
+        if (resetToken != null && resetToken.getExpiryDate().after(new Date())) {
+            // Verifica se o token ainda existe no banco de dados
+            if (passwordResetTokenRepository.existsByToken(token)) {
+                Usuario usuario = usuarioRepository.findByEmail(resetToken.getEmail());
+                if (usuario != null) {
+                    usuario.setPassword(PasswordGenerator.encodePassword(novaSenha));
+                    usuarioRepository.save(usuario);
+                    passwordResetTokenRepository.delete(resetToken);
+                }
+            } else {
+                // Token não existe no banco de dados, portanto, a troca de senha não é permitida
+                throw new TokenInvalidoException("Token inválido ou expirado");
+            }
+        } else {
+            throw new TokenInvalidoException("Token inválido ou expirado");
+        }
+    }
 
 }
