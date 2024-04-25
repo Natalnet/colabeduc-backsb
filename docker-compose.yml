@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+#  app: 
+#    container_name: api-colab
+#    image: matheusabd/colabeduc:1.0
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - colab
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/colabeduc
+#    depends_on:
+#      - db
+
+  db:
+    container_name: mysql_colabeduc
+    image: mariadb:latest
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: colabeduc
+    volumes:
+      - ./src/main/resources/colabeduc110424.sql:/docker-entrypoint-initdb.d/colabeduc110424.sql
+      - mysql_colab:/var/lib/mysql
+    networks:
+      - colab
+    ports:
+      - "3310:3306"
+
+volumes:
+  mysql_colab:
+
+networks:
+  colab:
