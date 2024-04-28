@@ -1,5 +1,6 @@
 package com.project.colabeduc.backend.entities;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.project.colabeduc.backend.enums.Papel;
@@ -40,6 +41,12 @@ public class Usuario {
     @Column(nullable = true)
     private String profile_image_url;
 
+    @Column(name = "reset_token")
+    private String token;
+  
+    @Column
+    private LocalDateTime reset_token_expiration;
+
     @Column
     private Boolean enabled = true;
 
@@ -61,5 +68,4 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
     private Papel papel;
-
 }
