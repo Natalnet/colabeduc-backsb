@@ -1,9 +1,9 @@
 package com.project.colabeduc.backend.controllers;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.colabeduc.backend.dtos.request.RecuperarSenhaRequestDTO;
+import com.project.colabeduc.backend.dtos.request.ResetarSenhaRequestDTO;
 import com.project.colabeduc.backend.entities.Usuario;
 import com.project.colabeduc.backend.services.UsuarioService;
 
@@ -58,16 +61,17 @@ public class UsuarioController {
     }
     
     @PostMapping("/recuperar-senha")
-    public void recuperarSenha(@RequestBody Map<String, String> requestBody) throws MessagingException{
-        String email = requestBody.get("email");
-        usuarioService.recuperarSenha(email);
+    public ResponseEntity<Usuario> recuperarSenha(@RequestBody RecuperarSenhaRequestDTO request) throws MessagingException{
+        Usuario usuario = this.usuarioService.recuperarSenha(request.username());
+
+        return ResponseEntity.ok().body(usuario);
     }
 
     @PostMapping("/resetar-senha")
-    public void resetarSenha(@RequestBody Map<String, String> requestBody) {
-        String token = requestBody.get("token");
-        String novaSenha = requestBody.get("novaSenha");
-        usuarioService.resetarSenha(token, novaSenha);
+    public ResponseEntity<Usuario> resetarSenha(@RequestParam("token") String token, @RequestBody ResetarSenhaRequestDTO request) {
+        Usuario usuario = this.usuarioService.resetarSenha(token, request.newPassword());
+
+        return ResponseEntity.ok().body(usuario);
     }
 
 }
